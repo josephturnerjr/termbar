@@ -30,18 +30,16 @@ class TermBar(object):
         self.print_graph_top(left_offset, zero)
         for label, value in self.series:
             lpad = max_label_len - len(label)
+            label_str = self.repeat_seq_str([(" ", lpad), (label, 1), (" ", 1)])
             if self.write_values:
                 rlabel = " %s" % (value,)
             else:
                 rlabel = ""
-            fill_len = int(self.width * (float(abs(value)) / val_range))
-            if value < 0:
-                chart_str = "%s%s%s%s" % (" " * (zero - fill_len), "#" * fill_len, self.y_axis_mark, " " * (self.width - zero))
-            else:
-                chart_str = "%s%s%s%s" % (" " * (zero), self.y_axis_mark, "#" * fill_len, " " * (self.width - zero - fill_len))
-            to_print = "%s%s %s%s%s%s" % (" " * lpad, label, self.delim, 
-                                            chart_str, self.delim, 
-                                            rlabel)
+            fill_len = int(self.width * (float(value) / val_range))
+            chart_str = self.get_chart_str(zero, fill_len)
+            to_print = "%s%s%s%s%s" % (label_str, self.delim, 
+                                       chart_str, self.delim, 
+                                       rlabel)
             print to_print
         self.print_graph_bottom(left_offset, zero)
         if self.write_axis_labels:
@@ -52,6 +50,23 @@ class TermBar(object):
             to_print = "%s%s%s%s" % (" " * loffset, llabel, " " * roffset, rlabel)
             print to_print
         self.print_bottom_margin()
+
+    def get_chart_str(self, zero, fill_len):
+        if fill_len < 0:
+            chart_str = self.repeat_seq_str([
+                                        (" ", (zero + fill_len)), 
+                                        ("#", -fill_len), 
+                                        (self.y_axis_mark, 1), 
+                                        (" ", (self.width - zero))
+                                       ])
+        else:
+            chart_str = self.repeat_seq_str([
+                                        (" ", (zero)), 
+                                        (self.y_axis_mark, 1), 
+                                        ("#", fill_len), 
+                                        (" ", (self.width - zero - fill_len))
+                                       ])
+        return chart_str
 
     def repeat_seq_str(self, seqs):
         fmt_str = "%s" * len(seqs)
@@ -73,9 +88,11 @@ class TermBar(object):
 
     def print_title(self, left_offset):
         if self.title:
-            print "%s%s%s" % (" " * left_offset, 
-                              " " * ((self.width - len(self.title))/2), 
-                              self.title)
+            print self.repeat_seq_str([
+                                        (" ", left_offset), 
+                                        (" ", ((self.width - len(self.title))/2)), 
+                                        (self.title,1),
+                                      ])
 
     def print_top_margin(self):
         print "\n" * self.MARGIN_TOP
