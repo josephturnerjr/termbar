@@ -18,8 +18,25 @@ TermBar draws bar charts in ascii in the terminal. Like this:
                ----------|------------------------------
              -20                                       60
 
+You can use it by piping in from the command line, like [spark](http://github.com/holman/spark):
 
-You can go minimal...
+    > awk '{ print length($0)}' termbar | grep -Ev 0 | termbar
+
+
+      |________________________________________
+     !|###########                             ! 21.0
+     !|#######                                 ! 14.0
+     !|##############                          ! 26.0
+     !|###############                         ! 27.0
+     !|###########################             ! 49.0
+     !|########################################! 72.0
+     !|######                                  ! 12.0
+     !|##                                      ! 4.0
+      |----------------------------------------
+     0                                        72.0
+
+
+Or you can use it as a Python module, in which case you get a little more. You can go minimal...
 
 
       __________|______________________________

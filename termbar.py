@@ -2,9 +2,15 @@ class TermBar(object):
     MARGIN_TOP = 1
     MARGIN_BOTTOM = 1
 
-    def __init__(self, series = [], width=40, title="", write_labels=False, 
+    def __init__(self, series = [], 
+                 width=40, 
+                 title="", 
+                 write_labels=False, 
                  write_axis_labels=False, 
-                 write_values=False, fill_char="#", delim="!", y_axis_mark='|'):
+                 write_values=False, 
+                 fill_char="#", 
+                 delim="!", 
+                 y_axis_mark='|'):
         self.series = series
         self.width = width
         self.title = title
@@ -28,6 +34,8 @@ class TermBar(object):
         left_offset = max_label_len + 2
         max_value = max([s[1] for s in self.series])
         min_value = min([s[1] for s in self.series])
+        if min_value > 0:
+            min_value = 0
         val_range = max_value - min_value
         if not val_range:
             maxmin = abs(int(1.2 * min_value))
@@ -41,7 +49,9 @@ class TermBar(object):
         for label, value in self.series:
             if self.write_labels:
                 lpad = max_label_len - len(label)
-                label_str = self.repeat_seq_str([(" ", lpad), (label, 1), (" ", 1)])
+                label_str = self.repeat_seq_str([(" ", lpad),
+                                                 (label, 1),
+                                                 (" ", 1)])
             else:
                 label_str = " "
             if self.write_values:
@@ -60,7 +70,10 @@ class TermBar(object):
             rlabel = str(max_value)
             loffset = max_label_len + 1 - (len(llabel) / 2)
             roffset = self.width + left_offset - (loffset + len(llabel))
-            to_print = "%s%s%s%s" % (" " * loffset, llabel, " " * roffset, rlabel)
+            to_print = "%s%s%s%s" % (" " * loffset, 
+                                     llabel, 
+                                     " " * roffset,
+                                     rlabel)
             print to_print
         self.print_bottom_margin()
 
@@ -101,9 +114,10 @@ class TermBar(object):
 
     def print_title(self, left_offset):
         if self.title:
+            lpad = (self.width - len(self.title)) / 2
             print self.repeat_seq_str([
                                         (" ", left_offset), 
-                                        (" ", ((self.width - len(self.title))/2)), 
+                                        (" ", lpad),
                                         (self.title,1),
                                       ])
 
