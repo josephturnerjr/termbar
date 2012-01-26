@@ -1,11 +1,9 @@
-import sys 
-
 class TermBar(object):
     MARGIN_TOP = 1
     MARGIN_BOTTOM = 1
 
     def __init__(self, series = [], width=40, title="", write_axis_labels=False, 
-               write_values=False, fill_char="#", delim="|", y_axis_mark='|'):
+               write_values=False, fill_char="#", delim="!", y_axis_mark='|'):
         self.series = series
         self.width = width
         self.title = title
@@ -106,27 +104,3 @@ class TermBar(object):
 
     def print_bottom_margin(self):
         print "\n" * self.MARGIN_BOTTOM
-
-
-if __name__ == "__main__":
-    line = sys.stdin.read()
-    vals = [("", float(v)) for v in line.split()]
-    a = TermBar(vals, write_axis_labels=True, write_values=True)
-    a.draw()
-    
-    #vals = [
-    #        ("January", 10),
-    #        ("February", 20),
-    #        ("March", 30),
-    #        ("April", 0),
-    #        ("May", 30),
-    #        ("June", 30),
-    #        ("July", 50),
-    #        ("August", 60),
-    #        ("September", -10),
-    #        ("October", -20),
-    #        ("November",55),
-    #        ("December", 23),
-    #       ]
-    #a = TermBar(vals, write_axis_labels=True, write_values=True, title="Monthly Chart")
-    #a.draw()
