@@ -2,11 +2,13 @@ class TermBar(object):
     MARGIN_TOP = 1
     MARGIN_BOTTOM = 1
 
-    def __init__(self, series = [], width=40, title="", write_axis_labels=False, 
-               write_values=False, fill_char="#", delim="!", y_axis_mark='|'):
+    def __init__(self, series = [], width=40, title="", write_labels=False, 
+                 write_axis_labels=False, 
+                 write_values=False, fill_char="#", delim="!", y_axis_mark='|'):
         self.series = series
         self.width = width
         self.title = title
+        self.write_labels = write_labels
         self.write_axis_labels = write_axis_labels
         self.write_values = write_values
         self.fill_char = fill_char
@@ -19,7 +21,10 @@ class TermBar(object):
         series should be a list of tuples:
             (label, value)
         """
-        max_label_len = max([len(s[0]) for s in self.series])
+        if self.write_labels:
+            max_label_len = max([len(s[0]) for s in self.series])
+        else:
+            max_label_len = 0
         left_offset = max_label_len + 2
         max_value = max([s[1] for s in self.series])
         min_value = min([s[1] for s in self.series])
@@ -34,8 +39,11 @@ class TermBar(object):
         zero = int(self.width * (float(0 - min_value) / val_range))
         self.print_graph_top(left_offset, zero)
         for label, value in self.series:
-            lpad = max_label_len - len(label)
-            label_str = self.repeat_seq_str([(" ", lpad), (label, 1), (" ", 1)])
+            if self.write_labels:
+                lpad = max_label_len - len(label)
+                label_str = self.repeat_seq_str([(" ", lpad), (label, 1), (" ", 1)])
+            else:
+                label_str = " "
             if self.write_values:
                 rlabel = " %s" % (value,)
             else:
