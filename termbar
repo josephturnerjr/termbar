@@ -4,8 +4,11 @@ import sys
 import termbar
 
 if __name__ == "__main__":
-    line = sys.stdin.read()
-    vals = [("", float(v)) for v in line.split()]
-    a = termbar.TermBar(vals, write_axis_labels=True, write_values=True)
+    lines = sys.stdin.readlines()
+    vals = []
+    for line in lines:
+        v = line.split()
+        vals.append(((len(v) > 1 and v[1]) or "", float(v[0])))
+    a = termbar.TermBar(vals, write_labels=True, write_axis_labels=True, write_values=True)
     a.draw()
     
