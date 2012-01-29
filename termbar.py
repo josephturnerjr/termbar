@@ -1,4 +1,5 @@
 class TermBar(object):
+    # Lines of margin to print
     MARGIN_TOP = 1
     MARGIN_BOTTOM = 1
 
@@ -19,14 +20,15 @@ class TermBar(object):
         self.write_values = write_values
         self.fill_char = fill_char
         self.delim = delim
-        self.y_axis_mark = '|'
+        self.y_axis_mark = y_axis_mark
 
     def draw(self):
         """
         Draws a left-right bar graph in the terminal
-        series should be a list of tuples:
-            (label, value)
         """
+        print "\n".join(self.get_graph())
+
+    def get_graph(self):
         if self.write_labels:
             max_label_len = max([len(s[0]) for s in self.series])
         else:
@@ -42,10 +44,11 @@ class TermBar(object):
             val_range = 2 * maxmin
             min_value = -maxmin
             max_value = maxmin
-        self.print_top_margin()
-        self.print_title(left_offset)
+        lines = []
+        lines.append(self.get_top_margin())
+        lines.append(self.get_title(left_offset))
         zero = int(self.width * (float(0 - min_value) / val_range))
-        self.print_graph_top(left_offset, zero)
+        lines.append(self.get_graph_top(left_offset, zero))
         for label, value in self.series:
             if self.write_labels:
                 lpad = max_label_len - len(label)
@@ -63,25 +66,28 @@ class TermBar(object):
             to_print = "%s%s%s%s%s" % (label_str, self.delim, 
                                        chart_str, self.delim, 
                                        rlabel)
-            print to_print
-        self.print_graph_bottom(left_offset, zero)
+            lines.append(to_print)
+        lines.append(self.get_graph_bottom(left_offset, zero))
         if self.write_axis_labels:
             llabel = str(min_value)
             rlabel = str(max_value)
             loffset = max_label_len + 1 - (len(llabel) / 2)
             roffset = self.width + left_offset - (loffset + len(llabel))
-            to_print = "%s%s%s%s" % (" " * loffset, 
-                                     llabel, 
-                                     " " * roffset,
-                                     rlabel)
-            print to_print
-        self.print_bottom_margin()
+            to_print = self.repeat_seq_str([
+                                            (" ", loffset), 
+                                            (llabel, 1),
+                                            (" ", roffset),
+                                            (rlabel, 1)
+                                           ])
+            lines.append(to_print)
+        lines.append(self.get_bottom_margin())
+        return lines
 
     def get_chart_str(self, zero, fill_len):
         if fill_len < 0:
             chart_str = self.repeat_seq_str([
                                         (" ", (zero + fill_len)), 
-                                        ("#", -fill_len), 
+                                        (self.fill_char, -fill_len), 
                                         (self.y_axis_mark, 1), 
                                         (" ", (self.width - zero))
                                        ])
@@ -89,7 +95,7 @@ class TermBar(object):
             chart_str = self.repeat_seq_str([
                                         (" ", (zero)), 
                                         (self.y_axis_mark, 1), 
-                                        ("#", fill_len), 
+                                        (self.fill_char, fill_len), 
                                         (" ", (self.width - zero - fill_len))
                                        ])
         return chart_str
@@ -98,31 +104,33 @@ class TermBar(object):
         fmt_str = "%s" * len(seqs)
         return fmt_str % tuple((x * y for x, y in seqs))
 
-    def print_graph_top(self, left_offset, zero):
-        self.print_graph_horiz(left_offset, zero, "_")
+    def get_graph_top(self, left_offset, zero):
+        return self.get_graph_horiz(left_offset, zero, "_")
 
-    def print_graph_bottom(self, left_offset, zero):
-        self.print_graph_horiz(left_offset, zero, "-")
+    def get_graph_bottom(self, left_offset, zero):
+        return self.get_graph_horiz(left_offset, zero, "-")
 
-    def print_graph_horiz(self, left_offset, zero, line_char):
-        print self.repeat_seq_str([
+    def get_graph_horiz(self, left_offset, zero, line_char):
+        return self.repeat_seq_str([
                                 (" ", left_offset), 
                                 (line_char, zero), 
                                 (self.y_axis_mark, 1), 
                                 (line_char, (self.width - zero))
                              ])
 
-    def print_title(self, left_offset):
+    def get_title(self, left_offset):
         if self.title:
             lpad = (self.width - len(self.title)) / 2
-            print self.repeat_seq_str([
+            return self.repeat_seq_str([
                                         (" ", left_offset), 
                                         (" ", lpad),
                                         (self.title,1),
                                       ])
+        else:
+            return ""
 
-    def print_top_margin(self):
-        print "\n" * self.MARGIN_TOP
+    def get_top_margin(self):
+        return "\n" * self.MARGIN_TOP
 
-    def print_bottom_margin(self):
-        print "\n" * self.MARGIN_BOTTOM
+    def get_bottom_margin(self):
+        return "\n" * self.MARGIN_BOTTOM

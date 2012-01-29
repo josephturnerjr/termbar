@@ -34,3 +34,6 @@ if __name__ == "__main__":
     print "...and add axis labels."
     a = TermBar(vals, write_labels=True, write_axis_labels=True, write_values=True, title="This is the title")
     a.draw()
+    print "...and make it look objectively awful."
+    a = TermBar(vals, write_labels=True, write_axis_labels=True, write_values=True, title="This is the title", fill_char="]", delim="^", y_axis_mark=">")
+    a.draw()
